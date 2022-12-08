@@ -1,0 +1,46 @@
+#connections {
+    height: 35vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-base-color: #424242;
+}
+
+    #connections::-webkit-scrollbar {
+        width: 5px;
+        height: 10px;
+    }
+
+    #connections::-webkit-scrollbar-track-piece {
+        background-color: #F5F5F5;
+    }
+
+    #connections::-webkit-scrollbar-thumb:vertical {
+        height: 20px;
+        background-color: #424242;
+    }
+
+.connection {
+    margin-bottom: 10px;
+    line-height: 1;
+}
+
+    .connection:hover {
+        background-color: #bbdefb;
+    }
+
+    .connection p {
+        margin: 0;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+    .connection em {
+        padding: 0;
+        font-size: 0.8em;
+        font-style: normal;
+    }
+
+#connectionForm button {
+    margin: 5px 5px 5px 5px;
+    float: right;
+}
