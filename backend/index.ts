@@ -1,14 +1,38 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import { load } from 'protobufjs';
-import { connect, StringCodec, NatsConnection } from "nats";
+import { connect, StringCodec, NatsConnection, Subscription } from "nats";
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import uuid from 'react-uuid';
 const app: Express = express();
 const port = 8081;
 
 var natsConnection: NatsConnection;
-var lastSubject: string = "";
+var lastSubscription: Subscription;
+const sc = StringCodec();
+var subject = '*';
+var messagesToBeCollected: string[] = [];
+
+setInterval(() => {
+    if (!natsConnection) {
+        return;
+    }
+    if (!lastSubscription) {
+        lastSubscription = natsConnection.subscribe(subject);
+    }
+    else {
+        if (lastSubscription.getSubject() !== subject) {
+            lastSubscription.unsubscribe();
+            lastSubscription = natsConnection.subscribe(subject);
+        }
+    } 
+    (async () => {
+        for await (const m of lastSubscription) {
+            console.log(`[${lastSubscription.getProcessed()}]: ${sc.decode(m.data)}`);
+            messagesToBeCollected.push(sc.decode(m.data));
+        }
+    })();
+}, 1000);
 
 app.use(express.json())
 app.use(cors({
@@ -58,8 +82,9 @@ app.get('/nats', async function (req: Request, res: Response) {
         return;
     }
 
-    const messages = await startListeningForSubject(search.toString())
-    res.status(200).send(messages);
+    subject = search.toString();
+    res.status(200).send(messagesToBeCollected);
+    messagesToBeCollected = [];
 })
 
 app.get('/protobuf', function (req: Request, res: Response) {
@@ -110,19 +135,6 @@ app.get('/protobuf', function (req: Request, res: Response) {
         
     });
 })
-
-async function startListeningForSubject(subject: string): Promise<string[]> {
-    const sc = StringCodec();
-    const sub = natsConnection.subscribe(subject);
-    const messages: string[] = [];
-    (async () => {
-        for await (const m of sub) {
-            console.log(`[${sub.getProcessed()}]: ${sc.decode(m.data)}`);
-            messages.push(sc.decode(m.data));
-        }
-    })();
-    return messages;
-}
 
 function processError(e: any): string {
     if (typeof e === "string") {

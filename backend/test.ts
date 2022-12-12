@@ -24,25 +24,30 @@ async function runPublisher() {
             throw 'Measure or Subject is undefined';
         }
         const sc = StringCodec();
-        for (var i = 0; i < 10; i++) {
-            //TODO: get real data
-            const opt = Math.round(getRandomWithinRange(0,42))
-            var payload = { 
-                subject: opt,
-                strings: {"string1": "hello string", "string2": "hello string2"}, 
-                integers: {"int1": 1, "int2": 2}, 
-                doubles: {"double1": 1.0, "double2": getRandomWithinRange(0,100)}, 
-                timestamp: new Timestamp().fromDate(new Date()), 
-                requestID: 'uuid'
-            };
 
-            var message = Measure.create(payload); 
-            var buffer = Measure.encode(message).finish();
-            var message = Measure.decode(buffer);
-            
-            natsConnection.publish("hello", sc.encode(JSON.stringify(message)));
-        }
-        await natsConnection.drain();
+        setInterval(async () => {
+            for (var i = 0; i < Math.round(getRandomWithinRange(1, 11)); i++) {
+                //TODO: get real data
+                const opt = Math.round(getRandomWithinRange(0,42))
+                var payload = { 
+                    subject: opt,
+                    strings: {"string1": "hello string", "string2": "hello string2"}, 
+                    integers: {"int1": 1, "int2": 2}, 
+                    doubles: {"double1": 1.0, "double2": getRandomWithinRange(0,100)}, 
+                    timestamp: new Timestamp().fromDate(new Date()), 
+                    requestID: 'uuid'
+                };
+    
+                var message = Measure.create(payload); 
+                var buffer = Measure.encode(message).finish();
+                var message = Measure.decode(buffer);
+                
+                natsConnection.publish("hello", sc.encode(JSON.stringify(message)));
+            }
+        }, 1000);
+
+        
+        //await natsConnection.drain();
     });
 }
 

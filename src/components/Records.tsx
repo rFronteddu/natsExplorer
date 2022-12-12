@@ -21,12 +21,16 @@ function Records(props: { search: string}) {
                 .then(response => {
                     if (response.status === 200) {
                         response.json().then(data => {
-                            if (data !== null && data !== undefined) {
-                                console.log(data);  
-                                setRecords(data);
+                            if (data === null || data === undefined) {
+                                return;
                             }
-                            if (data.length > 0) {
-                                setSelectedRecord(data[0]);
+                            const objData: RecordModel[] = [];
+                            for (const d of data) {
+                                objData.push(JSON.parse(d));
+                            }
+                            setRecords(objData);
+                            if (objData.length > 0) {
+                                setSelectedRecord(objData[0]);
                             } else {
                                 setSelectedRecord(null);
                             }
@@ -42,10 +46,10 @@ function Records(props: { search: string}) {
     return (
         <div id='records'>
             <h1>Records</h1>
-            {records.map(r => (
+            {records.map((record, index) => (
                 <div className="row" key={uuid()}>
                     <div className="col-xl-12">
-                        <Record record={r} depth={1}/>
+                        <Record record={record} depth={index}/>
                     </div>
                 </div>
             ))
