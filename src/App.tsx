@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import Connect from './components/Connect';
 import TopBar from './components/TopBar';
 import Records from './components/Records';
+import Details from './components/Details';
 
 const customStyles = {
     content: {
@@ -43,12 +44,12 @@ function App() {
             <TopBar searchTextChangedCallback={setSearchSubject} connected={connected} disconnectResultCallback={(result) => setIsConnected(result)} />
             {
                 connected &&
-                <div className='row'>
+                <div className='row' id='content'>
                     <div className='col-8-lg'>
                         <Records search={searchSubject} />
                     </div>
                     <div className='col-4-lg'>
-
+                        <Details />
                     </div>
                 </div>
             }
