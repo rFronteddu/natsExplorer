@@ -1,0 +1,7 @@
+{
+    "protoc": {
+        "options": [
+            "--proto_path=/Users/khertys/Downloads/ihmc/nats-explorer/nats-explorer/backend"
+        ]
+    }
+}
