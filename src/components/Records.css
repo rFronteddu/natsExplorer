@@ -1,0 +1,12 @@
+.record {
+    border-bottom: 0.01cm;
+    border-top: 0.01cm;
+    border-left: 0cm;
+    border-right: 0cm;
+    border-style: solid;
+    border-color: lightgray;
+}
+
+.record:hover {
+    background-color: lightblue;
+}

@@ -11,7 +11,6 @@ function Records(props: { search: string}) {
     const [search, setSearch] = useState<string>(props.search);
 
     useInterval(async () => {
-        console.log('interval - '+ search);
         if (search === '') 
             return;
         await fetch(`http://localhost:8081/nats?search=${encodeURIComponent(search)}`, {
@@ -45,9 +44,9 @@ function Records(props: { search: string}) {
 
     return (
         <div id='records'>
-            <h1>Records</h1>
+            <h2>Records</h2>
             {records.map((record, index) => (
-                <div className="row" key={uuid()}>
+                <div className="row record" key={uuid()}>
                     <div className="col-xl-12">
                         <Record record={record} depth={index}/>
                     </div>

@@ -6,11 +6,12 @@ import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import uuid from 'react-uuid';
 const app: Express = express();
 const port = 8081;
+const defaultSubject = '>';
 
 var natsConnection: NatsConnection;
 var lastSubscription: Subscription;
 const sc = StringCodec();
-var subject = '*';
+var subject = defaultSubject;
 var messagesToBeCollected: string[] = [];
 
 setInterval(() => {
@@ -28,7 +29,7 @@ setInterval(() => {
     } 
     (async () => {
         for await (const m of lastSubscription) {
-            console.log(`[${lastSubscription.getProcessed()}]: ${sc.decode(m.data)}`);
+            //console.log(`[${lastSubscription.getProcessed()}]: ${sc.decode(m.data)}`);
             messagesToBeCollected.push(sc.decode(m.data));
         }
     })();
@@ -78,6 +79,7 @@ app.get('/nats', async function (req: Request, res: Response) {
     const search = req.query.search;
 
     if (search === undefined || search === null || search === '') {
+        subject = defaultSubject;
         res.status(500).send('Search query is empty.');
         return;
     }
